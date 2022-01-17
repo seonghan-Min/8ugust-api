@@ -113,6 +113,24 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        // User Register
+        'user_register' => [
+			'driver' => 'daily',
+			'path' => storage_path('logs/user/user_register.log'),
+			'level' => 'debug',
+			'days' => 30,
+			'permission' => 0777
+		],
+
+        // User Login
+        'user_register' => [
+			'driver' => 'daily',
+			'path' => storage_path('logs/user/user_login.log'),
+			'level' => 'debug',
+			'days' => 30,
+			'permission' => 0777
+		],
     ],
 
 ];
