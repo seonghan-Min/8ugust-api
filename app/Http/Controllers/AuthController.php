@@ -8,44 +8,34 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 class AuthController extends Controller {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
+    
     public function __construct() {
         $this->middleware('jwt.verify', ['except' => ['login', 'register']]);
     }
 
-     /**
-     * Register new user
-     *
-     * @param  string $name, $email, $password, password_confirmation
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // User Register
     public function register(Request $request) {
     	
         $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string',
-            ]);
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string',
+        ]);
             
         if($validator->fails()){
-                return response()->json([
-                    'status' => 'error',
-                    'success' => false,
-                    'error' =>
-                    $validator->errors()->toArray()
-                ], 400);
-            }
+            return response()->json([
+                'status' => 'error',
+                'success' => false,
+                'error' =>
+                $validator->errors()->toArray()
+            ], 400);
+        }
             
         $user = User::create([
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'password' => Hash::make($request->input('password')),
-            ]);
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+        ]);
             
         return response()->json([
             'message' => 'User created.',
@@ -53,12 +43,7 @@ class AuthController extends Controller {
         ]);	
     }
 
-
-    /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // User Login
     public function login() {
         $credentials = request(['email', 'password']);
 
@@ -68,45 +53,23 @@ class AuthController extends Controller {
         return $this->respondWithToken($token);
     }
 
-
-    /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // User Auth
     public function me() {
         return response()->json(auth()->user());
     }
 
-
-    /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // User Logout
     public function logout() {
         auth()->logout();
         return response()->json(['message' => 'Successfully logged out']);
     }
 
-
-    /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // User Refresh
     public function refresh() {
         return $this->respondWithToken(auth()->refresh());
     }
 
-
-    /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
+    // Token
     protected function respondWithToken($token) {
         return response()->json([
             'access_token' => $token,
