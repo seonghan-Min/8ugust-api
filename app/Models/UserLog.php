@@ -9,7 +9,13 @@ class UserLog extends Model
 {
     use HasFactory;
     protected $connection = 'mysql';
+    protected $table = 'users_log';
     protected $fillable = [
-        'name', 'email', 'password',
+        'id', 'user_id', 'log_type',
+        'login_at', 'logout_at', 'auto_logout_yn'
     ];
+    
+    public $timestamps = false;
+
+    
 }
