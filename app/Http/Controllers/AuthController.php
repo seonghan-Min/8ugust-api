@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
 
 class AuthController extends Controller {
     
@@ -17,24 +19,22 @@ class AuthController extends Controller {
     public function register(Request $request) {
     	
         $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'user_id'  => 'required|string|max:255|unique:users',
+            'user_nm'  => 'required|string|max:255',
             'password' => 'required|string',
         ]);
             
         if($validator->fails()){
             return response()->json([
-                'status' => 'error',
                 'success' => false,
-                'error' =>
-                $validator->errors()->toArray()
+                'error'   => $validator->errors()->toArray()
             ], 400);
         }
-            
+                
         $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password')),
+            'user_id'  => $request->user_id,
+            'user_nm'  => $request->user_nm,
+            'password' => DB::select("SELECT HEX(AES_ENCRYPT('".$request->password."', '".env('DB_ENCRYPT', '8ugust_password_hex')."')) AS password")[0]->password,
         ]);
             
         return response()->json([
