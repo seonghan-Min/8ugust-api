@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -35,6 +36,8 @@ class AuthController extends Controller {
             'user_id'  => $request->user_id,
             'user_nm'  => $request->user_nm,
             'password' => DB::select("SELECT HEX(AES_ENCRYPT('".$request->password."', '".env('DB_ENCRYPT', '8ugust_password_hex')."')) AS password")[0]->password,
+            'email'    => !empty($request->email) ? $request->email : null,
+            'phone'    => !empty($request->phone) ? $request->phone : null
         ]);
             
         return response()->json([
