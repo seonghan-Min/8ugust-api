@@ -29,7 +29,6 @@ class AuthServiceProvider extends ServiceProvider
 
         // Custom
         Auth::provider('custom', function($app, array $config) {
-            dd(new CustomUserProvider($app['hash'], $config['model']));
             return new CustomUserProvider($app['hash'], $config['model']);
         });
     }
