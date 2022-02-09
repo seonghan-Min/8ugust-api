@@ -72,6 +72,13 @@ class AuthController extends Controller {
         return $this->respondWithToken(auth()->refresh());
     }
 
+    // AES_ENCRYPT
+    public function password_encrypt_or_decrypt($password, $type) {
+        if ($type == 'ENCRYPT') return DB::select("SELECT HEX(AES_ENCRYPT('".$password."', '".env('DB_ENCRYPT', '8ugust_password_hex')."')) AS password")[0]->password;
+        if ($type == 'DECRYPT') return DB::select("SELECT AES_DECRYPT(UNHEX('".$password."'), ".env('DB_ENCRYPT', '8ugust_password_hex')."')) AS password")[0]->password;
+        
+    }
+
     // Token
     protected function respondWithToken($token) {
         return response()->json([
